@@ -1,0 +1,65 @@
+{
+  "entity": {
+    "id": "SME-001",
+    "name": "Arcturus Manufacturing GmbH",
+    "industry": "Industrial Manufacturing",
+    "currency": "EUR",
+    "generated": "2026-05-20T00:01:45.268875"
+  },
+  "kpi_snapshot": {
+    "current_balance_eur": -6097929.95,
+    "cash_runway_months": -11.5,
+    "cash_runway_days": -345,
+    "avg_monthly_burn_eur": 528750.86,
+    "dso_days": 75.1,
+    "dpo_days": 35.1,
+    "hhi_score": 2598.9,
+    "hhi_flag": true,
+    "anomalies_flagged": 3,
+    "gross_margin_pct": 35.67
+  },
+  "latest_month": {
+    "year_month": "2025-12",
+    "revenue": 417038.99,
+    "cogs": 266419.14,
+    "gross_profit": 150619.85,
+    "gross_margin_pct": 36.12,
+    "operating_expenses": 103201.64,
+    "opex": 103201.64,
+    "ebit": 47418.21,
+    "ebit_margin_pct": 11.37,
+    "net_profit": 35563.66
+  },
+  "alerts": [
+    {
+      "id": "alert-001",
+      "severity": "CRITICAL",
+      "message": "Cash balance is negative (-€6.1M). Business is in deficit.",
+      "category": "Liquidity"
+    },
+    {
+      "id": "alert-002",
+      "severity": "CRITICAL",
+      "message": "Cash runway is negative (-11.5 months). Immediate action required.",
+      "category": "Liquidity"
+    },
+    {
+      "id": "alert-003",
+      "severity": "HIGH",
+      "message": "DSO at 75.1 days exceeds 60-day amber threshold. AR collection lagging.",
+      "category": "Receivables"
+    },
+    {
+      "id": "alert-004",
+      "severity": "HIGH",
+      "message": "HHI score 2598.9 signals high client concentration risk.",
+      "category": "Concentration"
+    },
+    {
+      "id": "alert-005",
+      "severity": "MEDIUM",
+      "message": "3 anomalies flagged in transaction log requiring review.",
+      "category": "Anomalies"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+client_name,total_ar,risk_score,overdue_days_max,payment_history_score,concentration_pct,risk_rating,risk_pct
+EastFlow Ltd,1021971.91,851026.88,61,72,13.4,HIGH,13.4
+Meridian Tech GmbH,3116005.39,2844588.12,97,31,41.0,CRITICAL,41.0
+NordBau AG,1130400.41,1569050.43,90,48,14.9,HIGH,14.9
+Solaris Parts SRL,1535138.34,1176595.14,75,55,20.2,HIGH,20.2
+Ventis Industries,801271.52,274424.03,45,81,10.5,MEDIUM,10.5
