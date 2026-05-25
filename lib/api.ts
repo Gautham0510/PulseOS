@@ -3,9 +3,6 @@ import { useAppStore } from './store';
 
 const BASE = '/data';
 
-const isApiMode = typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_MODE === 'api';
-const baseUrl = (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || '';
-
 const activeRequests = new Map<string, Promise<any>>();
 
 async function fetchJson(path: string): Promise<any> {
@@ -111,34 +108,20 @@ function pivotAgingData(rows: any[]): any[] {
 }
 
 export async function getMetricsSummary(): Promise<any> {
-  if (isApiMode) {
-    return fetchJson(`${baseUrl}/api/metrics`);
-  }
   return fetchJson(`${BASE}/metrics_summary.json`);
 }
 
 export async function getMonthlyCashflow(): Promise<Record<string, string>[]> {
-  if (isApiMode) {
-    const data = await fetchJson(`${baseUrl}/api/cashflow`);
-    return stringifyFields(data) as Record<string, string>[];
-  }
   return fetchCsv(`${BASE}/monthly_cashflow.csv`);
 }
 
 export async function getInvoiceAging(): Promise<Record<string, string>[]> {
-  const agingRows = await (isApiMode
-    ? fetchJson(`${baseUrl}/api/invoices/aging`)
-    : fetchCsv(`${BASE}/invoice_aging_report.csv`));
-
+  const agingRows = await fetchCsv(`${BASE}/invoice_aging_report.csv`);
   const pivoted = pivotAgingData(agingRows);
 
   let riskRows: any[] = [];
   try {
-    if (isApiMode) {
-      riskRows = await fetchJson(`${baseUrl}/api/invoices/risk`);
-    } else {
-      riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
-    }
+    riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
   } catch (e) {
     console.error('Failed to load risk ratings for aging report join', e);
   }
@@ -161,16 +144,8 @@ export async function getInvoiceAging(): Promise<Record<string, string>[]> {
 }
 
 export async function getClientRiskScores(): Promise<Record<string, string>[]> {
-  let riskRows: any[] = [];
-  if (isApiMode) {
-    riskRows = await fetchJson(`${baseUrl}/api/invoices/risk`);
-  } else {
-    riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
-  }
-
-  const agingRows = await (isApiMode
-    ? fetchJson(`${baseUrl}/api/invoices/aging`)
-    : fetchCsv(`${BASE}/invoice_aging_report.csv`));
+  const riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
+  const agingRows = await fetchCsv(`${BASE}/invoice_aging_report.csv`);
 
   const pivotedAging = pivotAgingData(agingRows);
   const agingMap = Object.fromEntries(pivotedAging.map(a => [a.client_name, a]));
@@ -207,12 +182,7 @@ export async function getClientRiskScores(): Promise<Record<string, string>[]> {
 }
 
 export async function getFxAnalysis(): Promise<Record<string, string>[]> {
-  let rows: any[] = [];
-  if (isApiMode) {
-    rows = await fetchJson(`${baseUrl}/api/fx`);
-  } else {
-    rows = await fetchCsv(`${BASE}/fx_analysis.csv`);
-  }
+  const rows = await fetchCsv(`${BASE}/fx_analysis.csv`);
 
   let runningSum = 0;
   return rows.map(r => {
@@ -234,46 +204,18 @@ export async function getFxAnalysis(): Promise<Record<string, string>[]> {
 }
 
 export async function getBudgetVsActual(): Promise<Record<string, string>[]> {
-  if (isApiMode) {
-    const data = await fetchJson(`${baseUrl}/api/budget-vs-actual`);
-    return stringifyFields(data) as Record<string, string>[];
-  }
   return fetchCsv(`${BASE}/budget_vs_actual.csv`);
 }
 
 export async function getPlWithMetrics(): Promise<Record<string, string>[]> {
-  // Fallback to local CSV because P&L endpoint is not defined in the API
   return fetchCsv(`${BASE}/pl_with_metrics.csv`);
 }
 
 export async function getAnomalyLog(): Promise<Record<string, string>[]> {
-  if (isApiMode) {
-    const data = await fetchJson(`${baseUrl}/api/anomalies`);
-    return stringifyFields(data) as Record<string, string>[];
-  }
   return fetchCsv(`${BASE}/anomaly_log.csv`);
 }
 
 export async function getMockAiResponse(message: string, metrics?: Record<string, unknown>): Promise<string> {
-  if (isApiMode) {
-    try {
-      const res = await fetch(`${baseUrl}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.reply && !data.reply.includes('OPENAI_API_KEY not configured')) {
-          return data.reply;
-        }
-      }
-    } catch (e) {
-      console.error('Failed to get live chat response, falling back to mock response', e);
-    }
-  }
-
-  // Fallback mock logic when static mode is active or OpenAI key is unconfigured
   const state = useAppStore.getState();
   const locale = state.locale || 'en';
   
