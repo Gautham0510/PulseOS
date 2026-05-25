@@ -45,9 +45,29 @@ export function formatDate(dateStr: string): string {
 
 export function parseCsv(text: string): Record<string, string>[] {
   const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim());
+  const headers = splitCsvLine(lines[0]).map(h => h.trim());
   return lines.slice(1).map(line => {
-    const values = line.split(',');
+    const values = splitCsvLine(line);
     return Object.fromEntries(headers.map((h, i) => [h, (values[i] ?? '').trim()]));
   });
+}
+
+function splitCsvLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
 }

@@ -3,52 +3,277 @@ import { useAppStore } from './store';
 
 const BASE = '/data';
 
-async function fetchJson(path: string) {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`Failed to fetch ${path}`);
-  return res.json();
+const isApiMode = typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_MODE === 'api';
+const baseUrl = (typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_API_BASE_URL : '') || '';
+
+const activeRequests = new Map<string, Promise<any>>();
+
+async function fetchJson(path: string): Promise<any> {
+  if (activeRequests.has(path)) {
+    return activeRequests.get(path);
+  }
+  const promise = (async () => {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`Failed to fetch ${path}`);
+    return res.json();
+  })();
+  activeRequests.set(path, promise);
+  try {
+    return await promise;
+  } finally {
+    activeRequests.delete(path);
+  }
 }
 
 async function fetchCsv(path: string): Promise<Record<string, string>[]> {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`Failed to fetch ${path}`);
-  const text = await res.text();
-  return parseCsv(text);
+  if (activeRequests.has(path)) {
+    return activeRequests.get(path);
+  }
+  const promise = (async () => {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`Failed to fetch ${path}`);
+    const text = await res.text();
+    return parseCsv(text);
+  })();
+  activeRequests.set(path, promise);
+  try {
+    return await promise;
+  } finally {
+    activeRequests.delete(path);
+  }
 }
 
-export async function getMetricsSummary() {
+// Convert all values in an object or array to strings to match CSV parser output
+function stringifyFields(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(stringifyFields);
+  }
+  if (data !== null && typeof data === 'object') {
+    return Object.fromEntries(
+      Object.entries(data).map(([k, v]) => [
+        k,
+        v === null || v === undefined ? '' : typeof v === 'object' ? JSON.stringify(v) : String(v)
+      ])
+    );
+  }
+  return String(data);
+}
+
+// Pivot the raw aging report data by client
+function pivotAgingData(rows: any[]): any[] {
+  const clientsMap: Record<string, any> = {};
+
+  for (const row of rows) {
+    const client = row.client_supplier || row.client_name || '';
+    if (!client) continue;
+
+    if (!clientsMap[client]) {
+      clientsMap[client] = {
+        client_name: client,
+        paid: 0,
+        bucket_1_30: 0,
+        bucket_31_60: 0,
+        bucket_61_90: 0,
+        bucket_90_plus: 0,
+        total_ar: 0,
+        overdue_invoices: 0,
+        risk_rating: 'LOW'
+      };
+    }
+
+    const bucket = row.aging_bucket || '';
+    const count = parseInt(row.invoice_count || '0') || 0;
+    const amount = parseFloat(row.total_amount || '0') || 0;
+
+    if (bucket === 'Paid') {
+      clientsMap[client].paid = amount;
+    } else {
+      clientsMap[client].overdue_invoices += count;
+
+      if (bucket === '1-30 days') {
+        clientsMap[client].bucket_1_30 = amount;
+      } else if (bucket === '31-60 days') {
+        clientsMap[client].bucket_31_60 = amount;
+      } else if (bucket === '61-90 days') {
+        clientsMap[client].bucket_61_90 = amount;
+      } else if (bucket === '90+ days') {
+        clientsMap[client].bucket_90_plus = amount;
+      }
+    }
+  }
+
+  // Calculate total_ar for each client
+  for (const client of Object.values(clientsMap)) {
+    client.total_ar = client.paid + client.bucket_1_30 + client.bucket_31_60 + client.bucket_61_90 + client.bucket_90_plus;
+  }
+
+  return Object.values(clientsMap);
+}
+
+export async function getMetricsSummary(): Promise<any> {
+  if (isApiMode) {
+    return fetchJson(`${baseUrl}/api/metrics`);
+  }
   return fetchJson(`${BASE}/metrics_summary.json`);
 }
 
-export async function getMonthlyCashflow() {
+export async function getMonthlyCashflow(): Promise<Record<string, string>[]> {
+  if (isApiMode) {
+    const data = await fetchJson(`${baseUrl}/api/cashflow`);
+    return stringifyFields(data) as Record<string, string>[];
+  }
   return fetchCsv(`${BASE}/monthly_cashflow.csv`);
 }
 
-export async function getInvoiceAging() {
-  return fetchCsv(`${BASE}/invoice_aging_report.csv`);
+export async function getInvoiceAging(): Promise<Record<string, string>[]> {
+  const agingRows = await (isApiMode
+    ? fetchJson(`${baseUrl}/api/invoices/aging`)
+    : fetchCsv(`${BASE}/invoice_aging_report.csv`));
+
+  const pivoted = pivotAgingData(agingRows);
+
+  let riskRows: any[] = [];
+  try {
+    if (isApiMode) {
+      riskRows = await fetchJson(`${baseUrl}/api/invoices/risk`);
+    } else {
+      riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
+    }
+  } catch (e) {
+    console.error('Failed to load risk ratings for aging report join', e);
+  }
+
+  const riskMap = Object.fromEntries(
+    riskRows.map(r => [r.client_supplier || r.client_name || '', (r.risk_rating || 'LOW').toUpperCase()])
+  );
+
+  return pivoted.map(item => ({
+    client_name: item.client_name,
+    paid: String(item.paid),
+    bucket_1_30: String(item.bucket_1_30),
+    bucket_31_60: String(item.bucket_31_60),
+    bucket_61_90: String(item.bucket_61_90),
+    bucket_90_plus: String(item.bucket_90_plus),
+    total_ar: String(item.total_ar),
+    risk_rating: riskMap[item.client_name] || 'LOW',
+    overdue_invoices: String(item.overdue_invoices)
+  })) as Record<string, string>[];
 }
 
-export async function getClientRiskScores() {
-  return fetchCsv(`${BASE}/client_risk_scores.csv`);
+export async function getClientRiskScores(): Promise<Record<string, string>[]> {
+  let riskRows: any[] = [];
+  if (isApiMode) {
+    riskRows = await fetchJson(`${baseUrl}/api/invoices/risk`);
+  } else {
+    riskRows = await fetchCsv(`${BASE}/client_risk_scores.csv`);
+  }
+
+  const agingRows = await (isApiMode
+    ? fetchJson(`${baseUrl}/api/invoices/aging`)
+    : fetchCsv(`${BASE}/invoice_aging_report.csv`));
+
+  const pivotedAging = pivotAgingData(agingRows);
+  const agingMap = Object.fromEntries(pivotedAging.map(a => [a.client_name, a]));
+
+  return riskRows.map(row => {
+    const name = row.client_supplier || row.client_name || '';
+    const total_ar = parseFloat(row.total_ar || '0') || 0;
+    const total_risk_score = parseFloat(row.total_risk_score || '0') || 0;
+    const risk_pct = parseFloat(row.risk_pct || '0') || 0;
+    const risk_rating = (row.risk_rating || 'LOW').toUpperCase();
+
+    const pivoted = agingMap[name] || { paid: 0, bucket_1_30: 0, bucket_31_60: 0, bucket_61_90: 0, bucket_90_plus: 0 };
+    
+    const payment_history_score = total_ar > 0 
+      ? Math.min(100, Math.round((pivoted.paid / total_ar) * 100)) 
+      : 100;
+
+    let overdue_days_max = 0;
+    if (pivoted.bucket_90_plus > 0) overdue_days_max = 97;
+    else if (pivoted.bucket_61_90 > 0) overdue_days_max = 75;
+    else if (pivoted.bucket_31_60 > 0) overdue_days_max = 45;
+    else if (pivoted.bucket_1_30 > 0) overdue_days_max = 15;
+
+    return {
+      client_name: name,
+      total_ar: String(total_ar),
+      risk_rating,
+      risk_score: String(total_risk_score),
+      overdue_days_max: String(overdue_days_max),
+      payment_history_score: String(payment_history_score),
+      concentration_pct: String(risk_pct),
+    };
+  }) as Record<string, string>[];
 }
 
-export async function getFxAnalysis() {
-  return fetchCsv(`${BASE}/fx_analysis.csv`);
+export async function getFxAnalysis(): Promise<Record<string, string>[]> {
+  let rows: any[] = [];
+  if (isApiMode) {
+    rows = await fetchJson(`${baseUrl}/api/fx`);
+  } else {
+    rows = await fetchCsv(`${BASE}/fx_analysis.csv`);
+  }
+
+  let runningSum = 0;
+  return rows.map(r => {
+    const impact = parseFloat(r.fx_impact_eur || '0') || 0;
+    runningSum += impact;
+
+    return {
+      year_month: r.year_month || '',
+      eur_inr_rate: String(r.eur_inr_rate || '0'),
+      eur_aed_rate: String(r.eur_aed_rate || '0'),
+      eur_revenue_pct: String(r.eur_share_pct || r.eur_revenue_pct || '0'),
+      inr_revenue_pct: String(r.inr_share_pct || r.inr_revenue_pct || '0'),
+      aed_revenue_pct: String(r.aed_share_pct || r.aed_revenue_pct || '0'),
+      fx_impact_eur: String(impact),
+      cumulative_fx_impact: String(runningSum),
+      fx_flag: String(r.fx_flag ?? 'false'),
+    };
+  }) as Record<string, string>[];
 }
 
-export async function getBudgetVsActual() {
+export async function getBudgetVsActual(): Promise<Record<string, string>[]> {
+  if (isApiMode) {
+    const data = await fetchJson(`${baseUrl}/api/budget-vs-actual`);
+    return stringifyFields(data) as Record<string, string>[];
+  }
   return fetchCsv(`${BASE}/budget_vs_actual.csv`);
 }
 
-export async function getPlWithMetrics() {
+export async function getPlWithMetrics(): Promise<Record<string, string>[]> {
+  // Fallback to local CSV because P&L endpoint is not defined in the API
   return fetchCsv(`${BASE}/pl_with_metrics.csv`);
 }
 
-export async function getAnomalyLog() {
+export async function getAnomalyLog(): Promise<Record<string, string>[]> {
+  if (isApiMode) {
+    const data = await fetchJson(`${baseUrl}/api/anomalies`);
+    return stringifyFields(data) as Record<string, string>[];
+  }
   return fetchCsv(`${BASE}/anomaly_log.csv`);
 }
 
-export function getMockAiResponse(message: string, metrics?: Record<string, unknown>): string {
+export async function getMockAiResponse(message: string, metrics?: Record<string, unknown>): Promise<string> {
+  if (isApiMode) {
+    try {
+      const res = await fetch(`${baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply && !data.reply.includes('OPENAI_API_KEY not configured')) {
+          return data.reply;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to get live chat response, falling back to mock response', e);
+    }
+  }
+
+  // Fallback mock logic when static mode is active or OpenAI key is unconfigured
   const state = useAppStore.getState();
   const locale = state.locale || 'en';
   

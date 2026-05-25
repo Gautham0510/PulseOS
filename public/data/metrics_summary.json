@@ -4,7 +4,7 @@
     "name": "Arcturus Manufacturing GmbH",
     "industry": "Industrial Manufacturing",
     "currency": "EUR",
-    "generated": "2026-05-20T00:01:45.268875"
+    "generated": "2026-05-22T08:22:07.652233"
   },
   "kpi_snapshot": {
     "current_balance_eur": -6097929.95,
@@ -15,51 +15,70 @@
     "dpo_days": 35.1,
     "hhi_score": 2598.9,
     "hhi_flag": true,
-    "anomalies_flagged": 3,
-    "gross_margin_pct": 35.67
+    "top_client": "Meridian Tech GmbH",
+    "top_client_ar_pct": 41.0,
+    "cumulative_fx_impact_eur": -4316.07,
+    "anomalies_flagged": 3
   },
   "latest_month": {
     "year_month": "2025-12",
     "revenue": 417038.99,
-    "cogs": 266419.14,
-    "gross_profit": 150619.85,
     "gross_margin_pct": 36.12,
-    "operating_expenses": 103201.64,
-    "opex": 103201.64,
     "ebit": 47418.21,
     "ebit_margin_pct": 11.37,
     "net_profit": 35563.66
   },
+  "annual_summary": [
+    {
+      "year": "2023",
+      "annual_revenue": 5161817.57,
+      "avg_gross_margin": 35.89416666666667,
+      "avg_ebit_margin": 9.924166666666666,
+      "annual_net_profit": 385737.83,
+      "revenue_yoy_pct": NaN
+    },
+    {
+      "year": "2024",
+      "annual_revenue": 5112326.34,
+      "avg_gross_margin": 35.1,
+      "avg_ebit_margin": 8.675833333333333,
+      "annual_net_profit": 338108.41000000003,
+      "revenue_yoy_pct": -0.9587946363629474
+    },
+    {
+      "year": "2025",
+      "annual_revenue": 5436959.73,
+      "avg_gross_margin": 35.515,
+      "avg_ebit_margin": 9.4625,
+      "annual_net_profit": 384916.5,
+      "revenue_yoy_pct": 6.35001305491778
+    }
+  ],
+  "budget_performance": {
+    "months_above_budget": 6,
+    "months_below_budget": 6,
+    "avg_variance_pct": -0.1
+  },
   "alerts": [
     {
-      "id": "alert-001",
-      "severity": "CRITICAL",
-      "message": "Cash balance is negative (-€6.1M). Business is in deficit.",
-      "category": "Liquidity"
-    },
-    {
-      "id": "alert-002",
-      "severity": "CRITICAL",
-      "message": "Cash runway is negative (-11.5 months). Immediate action required.",
-      "category": "Liquidity"
-    },
-    {
-      "id": "alert-003",
+      "type": "CONCENTRATION_RISK",
       "severity": "HIGH",
-      "message": "DSO at 75.1 days exceeds 60-day amber threshold. AR collection lagging.",
-      "category": "Receivables"
+      "message": "Meridian Tech GmbH represents 41.0% of total AR. HHI: 2598.9."
     },
     {
-      "id": "alert-004",
-      "severity": "HIGH",
-      "message": "HHI score 2598.9 signals high client concentration risk.",
-      "category": "Concentration"
-    },
-    {
-      "id": "alert-005",
+      "type": "HIGH_DSO",
       "severity": "MEDIUM",
-      "message": "3 anomalies flagged in transaction log requiring review.",
-      "category": "Anomalies"
+      "message": "DSO is 75.1 days \u2014 above the 60-day threshold."
+    },
+    {
+      "type": "CASH_RUNWAY",
+      "severity": "CRITICAL",
+      "message": "Cash runway is -11.5 months. Immediate review required."
+    },
+    {
+      "type": "TRANSACTION_ANOMALY",
+      "severity": "MEDIUM",
+      "message": "3 anomalous transactions detected."
     }
   ]
 }

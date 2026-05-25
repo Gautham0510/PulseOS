@@ -1,0 +1,33 @@
+{
+  "entity_id": "SME-001",
+  "entity_name": "Arcturus Manufacturing GmbH",
+  "industry": "Industrial Manufacturing",
+  "sub_industry": "Precision Components & Parts",
+  "country": "Germany",
+  "base_currency": "EUR",
+  "additional_currencies": [
+    "INR",
+    "AED"
+  ],
+  "fiscal_year_start": "01-01",
+  "fiscal_year_end": "12-31",
+  "tax_jurisdiction": "DE",
+  "corporate_tax_rate_pct": 25.0,
+  "vat_rate_pct": 19.0,
+  "founded_year": 2015,
+  "employees": 42,
+  "annual_revenue_eur_approx": 5000000,
+  "reporting_standard": "IFRS",
+  "bank_account_currency": "EUR",
+  "platform_onboarded": "2023-01-01",
+  "contact_email": "finance@arcturus-mfg.de",
+  "benchmark_peer_group": "EU SME Industrial Manufacturing",
+  "data_sources": [
+    "bank_statement.csv",
+    "invoice_master.csv",
+    "bic_historical_pl.csv",
+    "fx_exposure.csv",
+    "budget_forecast.csv",
+    "chart_of_accounts.csv"
+  ]
+}

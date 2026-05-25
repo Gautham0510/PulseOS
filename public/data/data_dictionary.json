@@ -1,0 +1,33 @@
+{
+  "bic_historical_pl.csv": {
+    "description": "Monthly P&L \u2014 synthetic \u20ac5M/yr EU manufacturing SME, Jan 2023\u2013Dec 2025",
+    "rows": 36,
+    "anomalies": "Cost spike month 14 (Feb 2024); revenue dip month 22 (Oct 2024)"
+  },
+  "bank_statement.csv": {
+    "description": "Daily EUR transactions with running balance, Jan 2023\u2013Dec 2025",
+    "rows": 2950,
+    "anomalies": "3 injected high-value anomaly transactions"
+  },
+  "invoice_master.csv": {
+    "description": "300 AP/AR invoices with aging and counterparty concentration",
+    "rows": 300,
+    "anomalies": "Meridian Tech GmbH = 38% AR; 5% invoices >90 days overdue"
+  },
+  "fx_exposure.csv": {
+    "description": "Monthly multi-currency revenue and FX impact (EUR/INR, EUR/AED)",
+    "rows": 36,
+    "anomalies": "INR depreciation drift from mid-2024"
+  },
+  "entity_config.json": {
+    "description": "SME entity metadata \u2014 Arcturus Manufacturing GmbH"
+  },
+  "chart_of_accounts.csv": {
+    "description": "37-code IFRS chart of accounts",
+    "rows": 37
+  },
+  "budget_forecast.csv": {
+    "description": "2026 forward budget \u2014 8% growth on 2025 actuals",
+    "rows": 12
+  }
+}

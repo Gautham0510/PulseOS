@@ -1,6 +1,24 @@
-client_name,paid,bucket_1_30,bucket_31_60,bucket_61_90,bucket_90_plus,total_ar,risk_rating,overdue_invoices
-EastFlow Ltd,643048.79,73694.25,232696.36,25361.32,47171.19,1021971.91,HIGH,9
-Meridian Tech GmbH,1996542.38,506348.37,69502.83,259412.48,284199.33,3116005.39,CRITICAL,32
-NordBau AG,337268.31,414125.66,139939.59,160144.33,78922.52,1130400.41,HIGH,14
-Solaris Parts SRL,826497.04,489264.47,59716.30,115202.29,44458.24,1535138.34,HIGH,19
-Ventis Industries,567082.65,193953.71,40235.16,0,0,801271.52,MEDIUM,5
+client_supplier,aging_bucket,invoice_count,total_amount
+EastFlow Ltd,1-30 days,3,73694.25
+EastFlow Ltd,31-60 days,4,232696.36
+EastFlow Ltd,61-90 days,1,25361.32
+EastFlow Ltd,90+ days,1,47171.19
+EastFlow Ltd,Paid,13,643048.79
+Meridian Tech GmbH,1-30 days,16,506348.37
+Meridian Tech GmbH,31-60 days,2,69502.83
+Meridian Tech GmbH,61-90 days,8,259412.48
+Meridian Tech GmbH,90+ days,6,284199.33
+Meridian Tech GmbH,Paid,52,1996542.38
+NordBau AG,1-30 days,8,414125.66
+NordBau AG,31-60 days,2,139939.59
+NordBau AG,61-90 days,3,160144.33000000002
+NordBau AG,90+ days,1,78922.52
+NordBau AG,Paid,7,337268.31
+Solaris Parts SRL,1-30 days,11,489264.47
+Solaris Parts SRL,31-60 days,2,59716.3
+Solaris Parts SRL,61-90 days,4,115202.29000000001
+Solaris Parts SRL,90+ days,2,44458.24
+Solaris Parts SRL,Paid,17,826497.04
+Ventis Industries,1-30 days,4,193953.71000000002
+Ventis Industries,31-60 days,1,40235.16
+Ventis Industries,Paid,12,567082.65

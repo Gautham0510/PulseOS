@@ -1,4 +1,4 @@
 date,transaction_id,description,amount,category,z_score,flag_type
 2023-01-16,TXN-000044,[ANOMALY] Allen-Allen – Revenue,116974.55,Revenue,9.769884501781704,Statistical (Z>3)
 2024-11-18,TXN-001902,[ANOMALY] Diaz LLC – Supplier Payment,-68220.59,Supplier Payment,13.29310852160845,Statistical (Z>3)
-2024-04-25,TXN-001348,"[ANOMALY] Nguyen, Padilla and Boyd – Misc Outflow",-18658.42,Misc Outflow,99.0,Injected
+2024-04-25,TXN-001348,"[ANOMALY] Nguyen, Padilla and Boyd – Misc Outflow",-18658.42,Misc Outflow,2.6672566840390024,Injected

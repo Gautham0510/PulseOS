@@ -23,7 +23,7 @@ export default function ChatPanel() {
     addMessage({ role: 'user', content: msg });
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
-    const reply = getMockAiResponse(msg);
+    const reply = await getMockAiResponse(msg);
     addMessage({ role: 'assistant', content: reply });
     setLoading(false);
   }
