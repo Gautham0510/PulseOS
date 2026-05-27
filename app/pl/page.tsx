@@ -74,11 +74,11 @@ export default function PLPage() {
         cogs: parseNum(r.cogs),
         gross_profit: parseNum(r.gross_profit),
         gross_margin_pct: parseNum(r.gross_margin_pct),
-        opex: parseNum(r.opex),
+        opex: parseNum(r.operating_expenses || r.opex),
         ebit: parseNum(r.ebit),
         ebit_margin_pct: parseNum(r.ebit_margin_pct),
         net_profit: parseNum(r.net_profit),
-        net_margin_pct: parseNum(r.net_margin_pct),
+        net_margin_pct: parseNum(r.net_margin_pct) || (parseNum(r.revenue) > 0 ? (parseNum(r.net_profit) / parseNum(r.revenue)) * 100 : 0),
         ebit_anomaly_flag: r.ebit_anomaly_flag === 'true',
         label: formatMonthLabel(r.year_month),
       })));

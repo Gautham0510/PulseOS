@@ -85,7 +85,7 @@ export default function Dashboard() {
     client_name: r.client_name,
     total_ar: parseNum(r.total_ar),
     risk_rating: r.risk_rating,
-    risk_pct: parseNum(r.risk_pct),
+    risk_pct: parseNum(r.concentration_pct),
   })) ?? [];
 
   return (

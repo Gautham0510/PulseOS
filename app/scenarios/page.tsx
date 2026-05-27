@@ -79,10 +79,20 @@ export default function ScenariosPage() {
     getMetricsSummary().then(m => {
       const lm = m.latest_month as Record<string, number>;
       const kpi = m.kpi_snapshot as Record<string, number>;
+      
+      const gross_profit = lm.revenue * (lm.gross_margin_pct / 100);
+      const cogs = lm.revenue - gross_profit;
+      const opex = gross_profit - lm.ebit;
+
       setBaseline({
-        revenue: lm.revenue, cogs: lm.cogs, gross_profit: lm.gross_profit,
-        gross_margin_pct: lm.gross_margin_pct, opex: lm.opex, ebit: lm.ebit,
-        net_profit: lm.net_profit, cash_balance: kpi.current_balance_eur,
+        revenue: lm.revenue,
+        cogs: cogs,
+        gross_profit: gross_profit,
+        gross_margin_pct: lm.gross_margin_pct,
+        opex: opex,
+        ebit: lm.ebit,
+        net_profit: lm.net_profit,
+        cash_balance: kpi.current_balance_eur,
         monthly_burn: kpi.avg_monthly_burn_eur,
       });
     });
