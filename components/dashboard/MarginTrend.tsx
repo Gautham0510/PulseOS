@@ -58,9 +58,9 @@ export default function MarginTrend({ data }: { data: PLRow[] }) {
       </div>
       <ResponsiveContainer width="100%" height={180}>
         <LineChart data={formatted} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2a2f45" />
-          <XAxis dataKey="label" tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} interval={7} />
-          <YAxis tickFormatter={v => `${v}%`} tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} domain={['auto', 'auto']} width={36} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+          <XAxis dataKey="label" tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} interval={7} />
+          <YAxis tickFormatter={v => `${v}%`} tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} domain={['auto', 'auto']} width={36} />
           <Tooltip content={<CustomTooltip />} />
           <Line type="monotone" dataKey="gross_margin_pct" name={t.dashboard.actual} stroke="#38bdf8" strokeWidth={2} dot={false} />
           <Line type="monotone" dataKey="gross_margin_3m_avg" name={t.dashboard.avg3m} stroke="#0369a1" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />

@@ -59,15 +59,15 @@ export default function ClientConcentration({ data }: { data: ClientRow[] }) {
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={formatted} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2a2f45" horizontal={false} />
-          <XAxis type="number" tickFormatter={v => formatCurrency(v)} tick={{ fill: '#5a6280', fontSize: 9 }} tickLine={false} axisLine={false} />
-          <YAxis type="category" dataKey="name" tick={{ fill: '#8891aa', fontSize: 10 }} tickLine={false} axisLine={false} width={100} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" horizontal={false} />
+          <XAxis type="number" tickFormatter={v => formatCurrency(v)} tick={{ fill: 'var(--text-extra-muted)', fontSize: 9 }} tickLine={false} axisLine={false} />
+          <YAxis type="category" dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} tickLine={false} axisLine={false} width={100} />
           <Tooltip content={<CustomTooltip />} />
           <Bar dataKey="total_ar" radius={[0, 3, 3, 0]}>
             {formatted.map((entry, i) => (
               <Cell key={i} fill={entry.color} fillOpacity={0.85} />
             ))}
-            <LabelList dataKey="risk_pct" position="right" formatter={(v: number) => `${v}%`} style={{ fill: '#8891aa', fontSize: 10 }} />
+            <LabelList dataKey="risk_pct" position="right" formatter={(v: number) => `${v}%`} style={{ fill: 'var(--text-muted)', fontSize: 10 }} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>

@@ -4,6 +4,51 @@
 
 @layer base {
   :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --chart-1: 221.2 83.2% 53.3%;
+    --chart-2: 142.4 71.8% 29.2%;
+    --chart-3: 35.4 91.7% 32.9%;
+    --chart-4: 0 84.2% 60.2%;
+    --chart-5: 188.7 94.5% 30%;
+
+    /* Theme Layout Mappings */
+    --background-color: #f8fafc;
+    --panel-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --card-bg: #ffffff;
+    --secondary-bg: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-muted: #475569;
+    --text-extra-muted: #64748b;
+    --budget-bar: #e2e8f0;
+    --net-cashflow-line: #0f172a;
+    --scrollbar-track: #f1f5f9;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+    --table-row-hover: #f1f5f9;
+  }
+
+  .dark {
     --background: 222 20% 7%;
     --foreground: 220 14% 96%;
     --card: 224 22% 13%;
@@ -23,12 +68,28 @@
     --border: 224 18% 20%;
     --input: 224 18% 20%;
     --ring: 210 100% 56%;
-    --radius: 0.5rem;
     --chart-1: 210 100% 56%;
     --chart-2: 142 71% 45%;
     --chart-3: 38 92% 50%;
     --chart-4: 0 72% 51%;
     --chart-5: 186 100% 42%;
+
+    /* Theme Layout Mappings */
+    --background-color: #0f1117;
+    --panel-bg: #13161f;
+    --border-color: #2a2f45;
+    --border-hover: #3a4060;
+    --card-bg: #1e2130;
+    --secondary-bg: #1e2130;
+    --text-primary: #e8eaf0;
+    --text-muted: #8891aa;
+    --text-extra-muted: #5a6280;
+    --budget-bar: #2a2f45;
+    --net-cashflow-line: #ffffff;
+    --scrollbar-track: #1e2130;
+    --scrollbar-thumb: #2a2f45;
+    --scrollbar-thumb-hover: #3a4060;
+    --table-row-hover: #252a3d;
   }
 }
 
@@ -39,7 +100,7 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #0f1117;
+    background-color: var(--background-color);
     font-family: 'Inter', sans-serif;
   }
 
@@ -49,15 +110,92 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #1e2130;
+    background: var(--scrollbar-track);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #2a2f45;
+    background: var(--scrollbar-thumb);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #3a4060;
+    background: var(--scrollbar-thumb-hover);
   }
+}
+
+/* 
+ * Custom class overrides to seamlessly transition hardcoded dark-theme hex 
+ * codes in components/pages to their theme-variable counterparts.
+ */
+
+/* Background overrides */
+.bg-\[\#0f1117\] {
+  background-color: var(--background-color) !important;
+}
+.bg-\[\#13161f\] {
+  background-color: var(--panel-bg) !important;
+}
+.bg-\[\#1e2130\] {
+  background-color: var(--card-bg) !important;
+}
+.bg-\[\#1e2130\]\/50 {
+  background-color: color-mix(in srgb, var(--card-bg) 50%, transparent) !important;
+}
+.bg-\[\#13161f\]\/50 {
+  background-color: color-mix(in srgb, var(--panel-bg) 50%, transparent) !important;
+}
+.bg-\[\#2a2f45\] {
+  background-color: var(--border-color) !important;
+}
+
+/* Border overrides */
+.border-\[\#2a2f45\] {
+  border-color: var(--border-color) !important;
+}
+.border-b-\[\#2a2f45\] {
+  border-bottom-color: var(--border-color) !important;
+}
+.border-t-\[\#2a2f45\] {
+  border-top-color: var(--border-color) !important;
+}
+.border-r-\[\#2a2f45\] {
+  border-right-color: var(--border-color) !important;
+}
+.border-l-\[\#2a2f45\] {
+  border-left-color: var(--border-color) !important;
+}
+.border-\[\#2a2f45\]\/40 {
+  border-color: color-mix(in srgb, var(--border-color) 40%, transparent) !important;
+}
+.border-t-\[\#2a2f45\]\/40 {
+  border-top-color: color-mix(in srgb, var(--border-color) 40%, transparent) !important;
+}
+.hover\:border-\[\#3a4060\]:hover {
+  border-color: var(--border-hover) !important;
+}
+
+/* Text overrides */
+.text-\[\#e8eaf0\] {
+  color: var(--text-primary) !important;
+}
+.text-\[\#8891aa\] {
+  color: var(--text-muted) !important;
+}
+.text-\[\#5a6280\] {
+  color: var(--text-extra-muted) !important;
+}
+.hover\:text-\[\#e8eaf0\]:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Interactive & hover overrides */
+.hover\:bg-\[\#1e2130\]:hover {
+  background-color: var(--secondary-bg) !important;
+}
+.hover\:bg-\[\#252a3d\]:hover {
+  background-color: var(--table-row-hover) !important;
+}
+.data-\[state\=active\]\:bg-\[\#2a2f45\][data-state=active] {
+  background-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
 }

@@ -67,13 +67,13 @@ export default function CashFlowChart({ data }: { data: CashflowRow[] }) {
               <stop offset="95%" stopColor="#ef4444" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2a2f45" />
-          <XAxis dataKey="label" tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} interval={5} />
-          <YAxis tickFormatter={v => formatCurrency(v)} tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} width={56} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+          <XAxis dataKey="label" tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} interval={5} />
+          <YAxis tickFormatter={v => formatCurrency(v)} tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} width={56} />
           <Tooltip content={<CustomTooltip />} />
           <Area type="monotone" dataKey="total_inflow" name={t.cashflow.inflow} fill="url(#inflowGrad)" stroke="#22c55e" strokeWidth={1.5} />
           <Area type="monotone" dataKey="total_outflow" name={t.cashflow.outflow} fill="url(#outflowGrad)" stroke="#ef4444" strokeWidth={1.5} />
-          <Line type="monotone" dataKey="net_cashflow" name={t.cashflow.net} stroke="#ffffff" strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="net_cashflow" name={t.cashflow.net} stroke="var(--net-cashflow-line)" strokeWidth={2} dot={false} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

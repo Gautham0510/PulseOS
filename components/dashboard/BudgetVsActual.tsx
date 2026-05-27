@@ -49,16 +49,16 @@ export default function BudgetVsActual({ data }: { data: BudgetRow[] }) {
         </div>
         <div className="flex items-center gap-3 text-[11px] text-[#8891aa]">
           <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-blue-500" />{t.dashboard.actual}</span>
-          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-[#3a4060]" />{t.dashboard.budget}</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm" style={{ backgroundColor: 'var(--budget-bar)' }} />{t.dashboard.budget}</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={formatted} margin={{ top: 5, right: 5, left: 0, bottom: 0 }} barCategoryGap="25%">
-          <CartesianGrid strokeDasharray="3 3" stroke="#2a2f45" vertical={false} />
-          <XAxis dataKey="label" tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} />
-          <YAxis tickFormatter={v => formatCurrency(v)} tick={{ fill: '#5a6280', fontSize: 10 }} tickLine={false} axisLine={false} width={56} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+          <XAxis dataKey="label" tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} />
+          <YAxis tickFormatter={v => formatCurrency(v)} tick={{ fill: 'var(--text-extra-muted)', fontSize: 10 }} tickLine={false} axisLine={false} width={56} />
           <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="budget_revenue" name={t.dashboard.budget} fill="#2a2f45" radius={[3, 3, 0, 0]} />
+          <Bar dataKey="budget_revenue" name={t.dashboard.budget} fill="var(--budget-bar)" radius={[3, 3, 0, 0]} />
           <Bar dataKey="actual_revenue" name={t.dashboard.actual} radius={[3, 3, 0, 0]}>
             {formatted.map((entry, i) => (
               <Cell key={i} fill={entry.color} />

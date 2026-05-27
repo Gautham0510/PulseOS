@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-import { Bell } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Bell, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useAppStore } from '@/lib/store';
 import { type Locale } from '@/lib/i18n';
 
@@ -13,9 +14,12 @@ const locales: { value: Locale; label: string; flag: string }[] = [
 
 export default function TopBar() {
   const { activeCurrency, setActiveCurrency, locale, setLocale, t, initializePreferences } = useAppStore();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     initializePreferences();
+    setMounted(true);
   }, [initializePreferences]);
 
   return (
@@ -63,6 +67,19 @@ export default function TopBar() {
             </button>
           ))}
         </div>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="p-2 rounded-md text-[#8891aa] hover:text-[#e8eaf0] hover:bg-[#1e2130] transition-colors"
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {mounted && theme === 'dark' ? (
+            <Sun className="w-4 h-4" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
+        </button>
 
         {/* Notification bell */}
         <button className="relative p-2 rounded-md text-[#8891aa] hover:text-[#e8eaf0] hover:bg-[#1e2130] transition-colors">
